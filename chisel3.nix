@@ -1,5 +1,4 @@
 { firrtl }:
-
 with import <nixpkgs> {};
 with import ./util.nix;
 
@@ -11,37 +10,42 @@ let
     sha256 = "16rjcw9zqdwmd86jbnlw6144z42a4zpv5i0r37iiibrnjv1fqiar";
   };
 
-  cp = mkCP [
-    "scala-reflect"
-    "scala-logging_2.11"
-  ];
+  scalaProject = { name, src, deps }: fix (self: stdenv.mkDerivation {
+    inherit name src;
+    buildInputs = [ scala_2_11 ];
+    CLASSPATH = mkCP deps;
+    paradise = jarLookup "paradise_2.11.12";
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      set -xe
+
+      mkdir -p $out/share/java
+      : Classpath: $CLASSPATH
+      scalac \
+        -deprecation -Yrangepos -unchecked -language:implicitConversions -Xsource:2.11 \
+        -Xplugin:$paradise \
+        $(find $src -name '*.scala') \
+        -d $out/share/java/$name.jar
+      set +x 
+    '';
+    passthru.jar = self + "/share/java/${name}.jar";
+  });
 
 in
-stdenv.mkDerivation rec {
-  name = "chisel3";
-  env = buildEnv {
-    name = name;
-    paths = buildInputs;
+rec {
+  chisel3-coreMacros = scalaProject {
+    name = "chisel3-coreMacros";
+    src = "${src}/coreMacros";
+    deps = [];
   };
-  inherit  cp src;
-  builder = builtins.toFile "builder.sh" ''
-    source $stdenv/setup
 
-    set -xe
-
-    echo $src
-    mkdir -p $out/share/java
-    scalac \
-      -classpath $cp: \
-      -deprecation -Yrangepos -unchecked -language:implicitConversions -Xsource:2.11 \
-      $(find $src/coreMacros -name '*.scala') \
-      -d $out/share/java/chisel3.jar
-  '';
-
-  buildInputs = [
-    scala_2_11
-    openjdk
-    protobuf
-  ];
-  passthru.jar = (placeholder "out") + "/share/java/chisel3.jar";
+  chisel3-chiselFrontend = scalaProject {
+    name = "chisel3-chiselFrontend";
+    src = "${src}/chiselFrontend";
+    deps = [
+      firrtl
+      chisel3-coreMacros
+      "scala-logging_2.11"
+    ];
+  };
 }

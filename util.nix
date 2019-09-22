@@ -1,6 +1,7 @@
 with import <nixpkgs> {};
-{
-  mavenDepX = l: {
+
+rec {
+  mavenDep = l: {
     name = builtins.elemAt l 0;
     value = fetchMavenArtifact {
       artifactId = builtins.elemAt l 0;
@@ -12,8 +13,12 @@ with import <nixpkgs> {};
 
   fix = f: let x = f x; in x; 
 
+  jarLookup = d:
+    if (builtins.isString d) then
+      (import ./dependencies.nix)."${d}".jar
+    else
+      d.jar;
+
   mkCP = deps:
-    builtins.concatStringsSep
-      ":"
-      (map (d: (import ./dependencies.nix)."${d}".jar) deps);
+    builtins.concatStringsSep ":" (map jarLookup deps);
 }

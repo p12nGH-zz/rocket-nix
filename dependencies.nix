@@ -1,6 +1,6 @@
 with import ./util.nix;
 let
-  depsList = ds: builtins.listToAttrs (map mavenDepX ds);
+  depsList = ds: builtins.listToAttrs (map mavenDep ds);
 in
   depsList [
     # misc Java dependencies
@@ -13,7 +13,7 @@ in
     [ "protobuf-java"        "com.google.protobuf"         "3.8.0"        "03z6kgkmg0hqw7cplh8wbd5mbhknwqwqzamg97mhgbfxd6l91fll" ]
     [ "joda-time"            "joda-time"                   "2.10.3"       "12cfaw67vsg57d8wc7nvb5phzwh4k7zrharzmbjs5yrnvsmaddpb" ]
 
-    # Scala 2.11
+    # Scala 2.11.12
     [ "scala-reflect"        "org.scala-lang"              "2.11.8"       "06a3idk3ywl7dy1fiy014j0aqqv8r1mnrq0ifj3dwd9ad9283q19" ]
     [ "scala-logging_2.11"   "com.typesafe.scala-logging"  "3.9.0"        "1r2jxmrvcw7nzzd7drs5lmryah68v8gy47gmjil0ccv8fcn24n3g" ]
     [ "scalatest_2.11"       "org.scalatest"               "3.0.5"        "0bxsv5zfpa62nha51lrry11zziydkvglgmzrjnxcn4kr4m0ypbra" ]
@@ -26,6 +26,7 @@ in
     [ "json4s-core_2.11"     "org.json4s"                  "3.6.1"        "0g7f24vijaj80k0apcgl1qb5cz9cwirri5gs9b896fiian2yw34z" ]
     [ "json4s-ast_2.11"      "org.json4s"                  "3.6.1"        "1bbcwiq0c8096skldriwngf0817mzfmxfc5z3p31dax05fyxlam6" ]
     [ "nscala-time_2.11"     "com.github.nscala-time"      "2.16.0"       "1gh6n6q2ni79rff3pc6yipks0635yf901lzcazx9sbyxfm9q436c" ]
+    [ "paradise_2.11.12"        "org.scalamacros"             "2.1.0"        "097si2b3c9xdwnjb4c9wdpqj86l08djc4ldv6nk59ba38cl69qx6" ]
 
     # Scala 2.12
     [ "scala-logging_2.12"   "com.typesafe.scala-logging"  "3.9.0"        "1g08fhvycn2vfqvxsgq27s8rfy24v1a1fl0v5jhrjsz2j6c3q1sq" ]

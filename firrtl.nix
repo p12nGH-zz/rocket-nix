@@ -40,15 +40,13 @@ fix (this: stdenv.mkDerivation rec {
     name = name;
     paths = buildInputs;
   };
-  inherit bash scala_2_11 cp;
+  inherit bash scala_2_11;
+  CLASSPATH = cp;
   jre = jre8_headless;
   builder = builtins.toFile "builder.sh" ''
     source $stdenv/setup
 
-    set -xe
-
-    echo $src
-    java -classpath $cp org.antlr.v4.Tool \
+    java org.antlr.v4.Tool \
       -package firrtl.antlr -visitor -no-listener -o firrtl/antlr $(find $src -name \*g4)
 
     cp $(find $src -name \*.proto) .
@@ -57,12 +55,11 @@ fix (this: stdenv.mkDerivation rec {
 
     mkdir -p $out/share/java
     scalac \
-      -classpath $cp: \
       -deprecation -Yrangepos -unchecked -language:implicitConversions -Xsource:2.11 \
       $(find $src/src/main/scala/ -name '*.scala') $javaFiles -d $out/share/java/firrtl.jar
     mkdir -p $out/bin
     echo "#!$bash/bin/bash" > $out/bin/firrtl
-    echo "exec $jre/bin/java -cp $cp:$scala_2_11/lib/scala-library.jar:$out/share/java/firrtl.jar firrtl.stage.FirrtlMain \$@" >> $out/bin/firrtl
+    echo "exec $jre/bin/java -cp $CLASSPATH:$scala_2_11/lib/scala-library.jar:$out/share/java/firrtl.jar firrtl.stage.FirrtlMain \$@" >> $out/bin/firrtl
     chmod +x $out/bin/firrtl
   '';
   inherit src;
