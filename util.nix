@@ -15,10 +15,12 @@ rec {
 
   jarLookup = d:
     if (builtins.isString d) then
-      (import ./dependencies.nix)."${d}".jar
+      [ (import ./dependencies.nix)."${d}".jar ]
     else
-      d.jar;
+      d.jars;
+
+  jarLookupDeps = deps: lib.unique (builtins.concatMap jarLookup deps);
 
   mkCP = deps:
-    builtins.concatStringsSep ":" (map jarLookup deps);
+    builtins.concatStringsSep ":" (jarLookupDeps deps);
 }

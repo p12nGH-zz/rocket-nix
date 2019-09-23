@@ -15,6 +15,17 @@ let
     buildInputs = [ scala_2_11 ];
     CLASSPATH = mkCP deps;
     paradise = jarLookup "paradise_2.11.12";
+
+    buildInfo = builtins.toFile "BuildInfo.scala" ''
+      package ${name}
+
+      case object BuildInfo {
+        val version: String = "todo"
+        override val toString: String = "BuildInfo toString not implemented"
+      }
+
+    '';
+
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       set -xe
@@ -24,28 +35,44 @@ let
       scalac \
         -deprecation -Yrangepos -unchecked -language:implicitConversions -Xsource:2.11 \
         -Xplugin:$paradise \
-        $(find $src -name '*.scala') \
+        $buildInfo $(find $src -name '*.scala') \
         -d $out/share/java/$name.jar
       set +x 
     '';
-    passthru.jar = self + "/share/java/${name}.jar";
+    passthru.jars = [ "${self}/share/java/${name}.jar" ];
   });
 
 in
 rec {
-  chisel3-coreMacros = scalaProject {
-    name = "chisel3-coreMacros";
+  coreMacros = scalaProject {
+    name = "coreMacros";
     src = "${src}/coreMacros";
     deps = [];
   };
 
-  chisel3-chiselFrontend = scalaProject {
-    name = "chisel3-chiselFrontend";
+  chiselFrontend = scalaProject {
+    name = "chiselFrontend";
     src = "${src}/chiselFrontend";
     deps = [
       firrtl
-      chisel3-coreMacros
+      coreMacros
       "scala-logging_2.11"
+    ];
+  };
+  chisel3 = scalaProject {
+    name = "chisel3";
+    src = "${src}/src/main";
+
+    deps = [
+      firrtl
+      coreMacros
+      chiselFrontend
+      "scala-logging_2.11"
+      "scopt_2.11"
+      "scalacheck_2.11"
+      "scalatest_2.11"
+      "scalactic_2.11"
+      "scala-reflect"
     ];
   };
 }

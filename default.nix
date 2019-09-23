@@ -1,4 +1,4 @@
 rec {
     firrtl = import ./firrtl.nix;
-    chisel3-coreMacros = import ./chisel3.nix { inherit firrtl; };
+    chisel3 = import ./chisel3.nix { inherit firrtl; };
 }
