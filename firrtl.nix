@@ -22,6 +22,7 @@ let
     "json4s-ext_2.12"
     "json4s-core_2.12"
     "json4s-ast_2.12"
+    "json4s-scalap_2.12"
     "nscala-time_2.12"
     "logback-classic"
     "junit"
@@ -31,6 +32,8 @@ let
     "antlr-complete"
     "protobuf-java"
     "joda-time"
+    "paranamer"
+    "commons-lang3"
   ];
 in
 fix (this: stdenv.mkDerivation rec {

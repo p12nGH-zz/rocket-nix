@@ -33,6 +33,7 @@ rec {
     inherit name src scalac_options;
     buildInputs = [ scala_2_12 ];
     CLASSPATH = mkCP deps;
+    _JAVA_OPTIONS = "-Xms1024m -Xmx2G -Xss256m";
     paradise = jarLookup "paradise_2.12.9";
 
 
@@ -60,6 +61,6 @@ rec {
         -d $out/share/java/$name.jar
       set +x
     '';
-    passthru.jars = (jarLookupDeps deps) ++ [ "${self}/share/java/${name}.jar" ];
+    passthru.jars = (jarLookupDeps deps) ++ [ "${self}/share/java/${name}.jar" "${scala_2_12}/lib/scala-library.jar" ];
   });
 }

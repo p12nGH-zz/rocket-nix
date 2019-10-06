@@ -12,6 +12,11 @@ in
     [ "antlr-complete"       "org.antlr"                   "3.5.2"        "0srjwxipwsfzmpi0v32d1l5lzk9gi5in8ayg33sq8wyp8ygnbji6" ]
     [ "protobuf-java"        "com.google.protobuf"         "3.8.0"        "03z6kgkmg0hqw7cplh8wbd5mbhknwqwqzamg97mhgbfxd6l91fll" ]
     [ "joda-time"            "joda-time"                   "2.10.3"       "12cfaw67vsg57d8wc7nvb5phzwh4k7zrharzmbjs5yrnvsmaddpb" ]
+    [ "jackson-databind"     "com.fasterxml.jackson.core"  "2.9.10"       "0mqp4ikn230gf8mii9kfm65kl7gl8mr1v85182fgbkfd7ykp3fs9" ]
+    [ "jackson-core"         "com.fasterxml.jackson.core"  "2.9.10"       "0lrc4br6zxk1ik3v723d68s2ki2bx7r3ivl65ijhji2aapbjdzk5" ]
+    [ "jackson-annotations"  "com.fasterxml.jackson.core"  "2.9.10"       "0k4rxrmc5hl91bqmpizgcxrnjxbqinfwq76irls8l40gbplg4xn8" ]
+    [ "paranamer"            "com.thoughtworks.paranamer"  "2.8"          "01yzrqxcdv2vc6xj8ymlwj5nhcb0jn620mg8728q2782lqcb3338" ]
+    [ "commons-lang3"        "org.apache.commons"          "3.9"          "0c62qd6s9gh8krzsscwfy92aka96cyh631l5rsl1gy9yrz6isbny" ]
 
     # Scala 2.12.9
     [ "scala-logging_2.12"   "com.typesafe.scala-logging"  "3.9.0"        "1g08fhvycn2vfqvxsgq27s8rfy24v1a1fl0v5jhrjsz2j6c3q1sq" ]
@@ -24,6 +29,7 @@ in
     [ "json4s-ext_2.12"      "org.json4s"                  "3.6.1"        "0hz4igzissb1kspajjvrri1fswqa25gmlbn7zvsdfr2c11acqa84" ]
     [ "json4s-core_2.12"     "org.json4s"                  "3.6.1"        "1h6szj8v5np6fkn8424djy6mxndsczsn9fihbcllx8i9ji883x70" ]
     [ "json4s-ast_2.12"      "org.json4s"                  "3.6.1"        "0ikpdxwqss0jva60iil3mxcjxgsvqr76hgaf1kmk53pj3mhdxirr" ]
+    [ "json4s-scalap_2.12"   "org.json4s"                  "3.6.1"        "1iffd92gdchgnyjwbszymh9jqvmkd6dbbx7f8jf71ivngiwzcd0c" ]
     [ "nscala-time_2.12"     "com.github.nscala-time"      "2.16.0"       "13cjvv4yn9yg3n4zjinv43r4jynk8b7zvyipvs55sk19w3dngvmc" ]
     [ "paradise_2.12.9"      "org.scalamacros"             "2.1.0"        "18ps28pg24cmggkmxzzxd65z3zwrzhnp52kdd4p1an2iacfqvkf5" ]
     [ "scala-reflect"        "org.scala-lang"              "2.12.8"       "0niiazlnflwz7j9f5ap9bl9l4gly6f1a12x0rq2cx6a5bhwhar2d" ]
