@@ -32,15 +32,32 @@ let
     ];
   };
 
-in
-  scalaProject {
-    name = "rocket";
+  rocketchip = scalaProject {
+    name = "rocketchip";
     src = "${src}/src/main/scala";
     deps = [
       rocketchip-macros
       chisel3
       hardfloat
       api-config-chipsalliance
+      "jackson-databind"
+      "jackson-core"
+      "jackson-annotations"
     ];
-  }
+    scalac_options = "-Xsource:2.11";
+  };
 
+  mkExe = { jar, class }:
+    let
+      jre = jre8_headless;
+      cp = mkCP [ jar ];
+    in
+      writeShellScriptBin jar.name ''
+        exec ${jre}/bin/java -cp ${cp} ${class} $@
+      '';
+
+in
+  mkExe {
+    jar = rocketchip;
+    class =  "freechips.rocketchip.system.Generator";
+  }
