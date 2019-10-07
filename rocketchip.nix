@@ -57,7 +57,10 @@ let
       '';
 
 in
-  mkExe {
+{
+  rocketchip = mkExe {
     jar = rocketchip;
     class =  "freechips.rocketchip.system.Generator";
-  }
+  };
+  rocketchip-src = src;
+}
