@@ -1,11 +1,9 @@
 {rocketchip, firrtl, nixpkgs, dependencies}:
 
-with nixpkgs;
-
-let
-  fir = conf: stdenv.mkDerivation {
+rec {
+  fir = conf: nixpkgs.stdenv.mkDerivation {
     name = "${conf}.firrtl";
-    buildInputs = [ rocketchip dtc xz ];
+    buildInputs = [ rocketchip nixpkgs.dtc nixpkgs.xz ];
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       mkdir $out
@@ -24,9 +22,9 @@ let
     src = dependencies.fromGitHub.chipsalliance.rocket-chip;
   };
 
-  verilog = conf: stdenv.mkDerivation {
+  verilog = conf: nixpkgs.stdenv.mkDerivation {
     name = "${conf}.verilog";
-    buildInputs = [ firrtl xz ];
+    buildInputs = [ firrtl nixpkgs.xz ];
 
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
@@ -38,7 +36,4 @@ let
     '';
     firrtl = fir conf;
   };
-in
-{
-  inherit fir verilog;
 }
