@@ -1,28 +1,13 @@
-with import <nixpkgs> {};
+{ dependencies, nixpkgs }:
+
+with nixpkgs;
 
 rec {
-  mavenDep = l: {
-    name = builtins.elemAt l 0;
-    value = fetchMavenArtifact {
-      artifactId = builtins.elemAt l 0;
-      groupId = builtins.elemAt l 1;
-      version = builtins.elemAt l 2;
-      sha256 = builtins.elemAt l 3;
-    };
-  };
-
   fix = f: let x = f x; in x;
 
-  jarLookup = d:
-    if (builtins.isString d) then
-      [ (import ./dependencies.nix)."${d}".jar ]
-    else
-      d.jars;
-
+  jarLookup = d: d.jars;
   jarLookupDeps = deps: lib.unique (builtins.concatMap jarLookup deps);
-
-  mkCP = deps:
-    builtins.concatStringsSep ":" (jarLookupDeps deps);
+  mkCP = deps: builtins.concatStringsSep ":" (jarLookupDeps deps);
 
   scalaProject =
     { name
@@ -34,7 +19,7 @@ rec {
     buildInputs = [ scala_2_12 ];
     CLASSPATH = mkCP deps;
     _JAVA_OPTIONS = "-Xms1024m -Xmx2G -Xss256m";
-    paradise = jarLookup "paradise_2.12.9";
+    paradise = jarLookup dependencies.scala.paradise;
 
 
     buildInfo = let

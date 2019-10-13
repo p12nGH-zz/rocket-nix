@@ -1,11 +1,11 @@
-{rocketchip, firrtl}:
+{rocketchip, firrtl, nixpkgs, dependencies}:
 
-with import <nixpkgs> {};
+with nixpkgs;
 
 let
   fir = conf: stdenv.mkDerivation {
     name = "${conf}.firrtl";
-    buildInputs = [ rocketchip.rocketchip dtc xz ];
+    buildInputs = [ rocketchip dtc xz ];
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       mkdir $out
@@ -21,7 +21,7 @@ let
     inherit conf;
 
     # needed for bootrom.img
-    src = rocketchip.rocketchip-src;
+    src = dependencies.fromGitHub.chipsalliance.rocket-chip;
   };
 
   verilog = conf: stdenv.mkDerivation {

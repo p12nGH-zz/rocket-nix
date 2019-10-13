@@ -1,8 +1,42 @@
-with import ./util.nix;
+{ fetchMavenArtifact, fetchFromGitHub }:
+
 let
-  depsList = ds: builtins.listToAttrs (map mavenDep ds);
-in
-  depsList [
+  fix = f: let x = f x; in x;
+  fetch = mapName: l: {
+    name = mapName (builtins.elemAt l 0);
+    value = fix (this: fetchMavenArtifact {
+      artifactId = builtins.elemAt l 0;
+      groupId = builtins.elemAt l 1;
+      version = builtins.elemAt l 2;
+      sha256 = builtins.elemAt l 3;
+    } // { jars = [ this.jar ]; });
+  };
+
+  javaDep = fetch (n: n);
+  # like java dep, but remove Scala version from name
+  scalaDep = fetch (n: with builtins; head (split "_2." n));
+  depsList = fetch: ds: builtins.listToAttrs (map fetch ds);
+
+  depsListGitHub =
+    let
+      op = tree: repoParams:
+        let
+          owner = builtins.elemAt repoParams 0;
+          repo = builtins.elemAt repoParams 1;
+          fetched = {
+            "${repo}" = fetchFromGitHub {
+              inherit owner repo;
+              rev = builtins.elemAt repoParams 2;
+              sha256 = builtins.elemAt repoParams 3;
+            };
+          };
+        in
+          tree // { "${owner}" = (tree."${owner}" or {}) // fetched; };
+    in
+      builtins.foldl' op {};
+
+in {
+  java = depsList javaDep [
     # misc Java dependencies
     [ "logback-classic"      "ch.qos.logback"              "1.2.3"        "1q1pmkmsadlaknsj1c7b1741vv2n408kiqan784qzjvzkr9zhlzv" ]
     [ "junit"                "junit"                       "4.12"         "0shibkq1faqc7j8cl0n5swscazanzzcqfy37j15xh8z20l41ywjr" ]
@@ -17,7 +51,9 @@ in
     [ "jackson-annotations"  "com.fasterxml.jackson.core"  "2.9.10"       "0k4rxrmc5hl91bqmpizgcxrnjxbqinfwq76irls8l40gbplg4xn8" ]
     [ "paranamer"            "com.thoughtworks.paranamer"  "2.8"          "01yzrqxcdv2vc6xj8ymlwj5nhcb0jn620mg8728q2782lqcb3338" ]
     [ "commons-lang3"        "org.apache.commons"          "3.9"          "0c62qd6s9gh8krzsscwfy92aka96cyh631l5rsl1gy9yrz6isbny" ]
+  ];
 
+  scala = depsList scalaDep [
     # Scala 2.12.9
     [ "scala-logging_2.12"   "com.typesafe.scala-logging"  "3.9.0"        "1g08fhvycn2vfqvxsgq27s8rfy24v1a1fl0v5jhrjsz2j6c3q1sq" ]
     [ "scalatest_2.12"       "org.scalatest"               "3.0.5"        "1r85w0m5m9rs52yf25nkslf2vz2pwhk5g2ldk93dl837xyyba5ml" ]
@@ -34,4 +70,13 @@ in
     [ "paradise_2.12.9"      "org.scalamacros"             "2.1.0"        "18ps28pg24cmggkmxzzxd65z3zwrzhnp52kdd4p1an2iacfqvkf5" ]
     [ "scala-reflect"        "org.scala-lang"              "2.12.8"       "0niiazlnflwz7j9f5ap9bl9l4gly6f1a12x0rq2cx6a5bhwhar2d" ]
     [ "scalactic_2.12"       "org.scalactic"               "3.2.0-M1"     "0443ngps1ffibdww8r6y1m2dif5051lrirsivvnb855vbi72wyvm" ]
-  ]
+  ];
+
+  fromGitHub = depsListGitHub [
+    [ "freechipsproject" "firrtl"             "5e9b286185e98c58e5fde1987c48d085ebdb1e25" "0y0lqa4r7401zkzymigcw2g8adyvkr02nxsgc8pbnz6r2z8kx0q3" ]
+    [ "freechipsproject" "chisel3"            "e1aa5f3f5c0cdeb204047c3ca50801d9f7ea25f1" "1349q70hcy14cqpl8ff9v052na3qsyzaaf7180vh771jzd057gq4" ]
+    [ "ucb-bar"          "berkeley-hardfloat" "3ca9cc7901b91ddccf3fcfd686aa7a93ed48d84f" "0ybyxcqiyrcg2jhacjq83zpmghxsn3x9rpb0wdigcz9xk1mvpisg" ]
+    [ "chipsalliance" "api-config-chipsalliance" "d619ca850846d2ec36da64bf8a28e7d9a3d9ed1b" "0cr0v2i8619c1mzq27yf7bg19dzkb50h1x2c0crr04m83wjapny5"]
+    [ "chipsalliance"    "rocket-chip"        "d42b521df4596bd6425b675794a06da08991eea0" "0yaq76zw07pjxsrf4pjy98jlixy8zdjw2k69jn4sk9y0lca0rv2s" ]
+  ];
+}

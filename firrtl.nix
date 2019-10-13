@@ -1,43 +1,37 @@
-with import <nixpkgs> {};
-with import ./util.nix;
+{ dependencies, util, nixpkgs }:
+
+with nixpkgs;
+with util;
 
 let
-
-  src = fetchFromGitHub {
-    owner = "freechipsproject";
-    repo = "firrtl";
-    rev = "5e9b286185e98c58e5fde1987c48d085ebdb1e25";
-    sha256 = "0y0lqa4r7401zkzymigcw2g8adyvkr02nxsgc8pbnz6r2z8kx0q3";
-  };
-
-  deps = [
-    "scala-reflect"
-    "scala-logging_2.12"
-    "scalatest_2.12"
-    "scalacheck_2.12"
-    "scopt_2.12"
-    "moultingyaml_2.12"
-    "json4s-native_2.12"
-    "json4s-jackson_2.12"
-    "json4s-ext_2.12"
-    "json4s-core_2.12"
-    "json4s-ast_2.12"
-    "json4s-scalap_2.12"
-    "nscala-time_2.12"
-    "logback-classic"
-    "junit"
-    "commons-text"
-    "antlr4"
-    "antlr4-runtime"
-    "antlr-complete"
-    "protobuf-java"
-    "joda-time"
-    "paranamer"
-    "commons-lang3"
+  deps = with dependencies.java; with dependencies.scala; [
+    scala-reflect
+    scala-logging
+    scalatest
+    scalacheck
+    scopt
+    moultingyaml
+    json4s-native
+    json4s-jackson
+    json4s-ext
+    json4s-core
+    json4s-ast
+    json4s-scalap
+    nscala-time
+    logback-classic
+    junit
+    commons-text
+    antlr4
+    antlr4-runtime
+    antlr-complete
+    protobuf-java
+    joda-time
+    paranamer
+    commons-lang3
   ];
 in
 fix (this: stdenv.mkDerivation rec {
-  inherit src;
+  src = dependencies.fromGitHub.freechipsproject.firrtl;
   name = "firrtl";
   env = buildEnv {
     name = name;
