@@ -23,4 +23,7 @@ rec {
   generate = import ./generate.nix {
     inherit rocketchip firrtl nixpkgs dependencies;
   };
+  toolchain = import ./toolchain.nix {
+    inherit nixpkgs;
+  };
 }
